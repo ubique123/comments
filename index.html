@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diet Debate - Public Comments</title>
+    <title>Diet Debate - Group Discussion</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Load Configuration First -->
-<script src="config.js"></script>
+    <script src="config.js"></script> <!-- Load Config First -->
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -16,6 +15,8 @@
             --accent-blue: #1877f2;
             --border-color: #ced0d4;
             --hover-bg: #f2f2f2;
+            --group-vegan: #4caf50;
+            --group-meat: #d32f2f;
         }
 
         body {
@@ -35,6 +36,7 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             position: relative;
+            /*border-top: 5px solid #ccc;*/ /* Dynamic color via JS */
         }
 
         /* Header */
@@ -44,326 +46,141 @@
             align-items: center;
             gap: 10px;
         }
-
         .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #ddd;
-            background-image: url('https://ui-avatars.com/api/?name=Wege+Maniacy&background=random');
+            width: 40px; height: 40px; border-radius: 50%;
+            background-image: url('https://ui-avatars.com/api/?name=Mięso+Maniacy&background=random');
             background-size: cover;
         }
-
-        .user-info h3 {
-            margin: 0;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .user-info span {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .post-caption {
-            padding: 4px 16px 12px;
-            font-size: 15px;
-            color: var(--text-primary);
-        }
-
-        /* Image Section */
-        .post-image {
-            width: 100%;
-            height: 300px;
-            display: flex;
-            position: relative;
-            background-color: #000;
-        }
-
-        .panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.5rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .panel.vegan {
-            background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
-        }
-        .panel.vegan::before {
-            content: "🥗";
-            font-size: 4rem;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
+        .user-info h3 { margin: 0; font-size: 15px; font-weight: 600; }
+        .user-info span { font-size: 13px; color: var(--text-secondary); }
         
-        .panel.meat {
-            background-image: url('https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
-        }
-        .panel.meat::before {
-            content: "🥩";
-            font-size: 4rem;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
+        .post-caption { padding: 4px 16px 12px; font-size: 15px; }
 
-        .panel.has-error::before { opacity: 1; }
+        /* Image */
+        .post-image {
+            width: 100%; height: 300px; display: flex; position: relative; background-color: #000;
+        }
+        .panel {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; font-weight: bold; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            background-size: cover; background-position: center;
+        }
+        .panel.vegan { background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); }
+        .panel.meat { background-image: url('https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); }
+        .panel::before {
+            content: attr(data-icon); font-size: 4rem; margin-bottom: 10px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); opacity: 0; transition: opacity 0.3s;
+        }
         .panel.has-error { background: #333; opacity: 0.8; }
-
+        .panel.has-error::before { opacity: 1; }
+        
         .vs-badge {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            color: black;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 1.8rem;
-            z-index: 10;
-            border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; color: black; padding: 8px 16px; border-radius: 20px;
+            font-weight: 900; font-size: 1.8rem; z-index: 10; border: 3px solid white;
         }
 
-        /* Action Bar */
-        .action-bar {
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 8px 0;
-            width: 30%;
-            border-radius: 4px;
-        }
+        /* Actions */
+        .action-bar { padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-around; }
+        .action-btn { background: none; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer; padding: 8px 0; width: 30%; border-radius: 4px; }
         .action-btn:hover { background-color: var(--hover-bg); }
 
         /* Comments */
         .comments-section { padding: 10px; background-color: #fff; }
-        .comment-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 10px 0;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .comment-item {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .comment-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .comment-bubble {
-            background-color: var(--bg-color);
-            padding: 8px 12px;
-            border-radius: 18px;
-            flex-grow: 1;
-        }
-        .comment-author {
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-            display: block;
-        }
-        .comment-text {
-            font-size: 15px;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-
-        /* Input Area - UPDATED */
-        .input-area {
-            border-top: 1px solid var(--border-color);
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: stretch;
-        }
-
-        .name-input-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .name-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            width: 60px;
-        }
-
-        #usernameInput {
-            flex-grow: 1;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            font-size: 14px;
-            outline: none;
-        }
-        #usernameInput:focus { background-color: #fff; border-color: var(--accent-blue); }
-
-        .comment-input-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .input-wrapper { flex-grow: 1; }
+        .comment-list { list-style: none; padding: 0; margin: 0 0 10px 0; max-height: 500px; overflow-y: auto; }
+        .comment-item { display: flex; gap: 10px; margin-bottom: 12px; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        #commentInput {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            font-size: 15px;
-            outline: none;
-            box-sizing: border-box;
-        }
-        #commentInput:focus { background-color: #fff; border-color: var(--accent-blue); }
+        /* Indentation */
+        .comment-item.reply-level-1 { margin-left: 40px; border-left: 2px solid #e4e6eb; padding-left: 10px; }
+        .comment-item.reply-level-2 { margin-left: 80px; border-left: 2px solid #e4e6eb; padding-left: 10px; }
+        .comment-item.reply-level-3 { margin-left: 120px; border-left: 2px solid #e4e6eb; padding-left: 10px; }
+
+        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; }
+        .comment-bubble { background-color: var(--bg-color); padding: 8px 12px; border-radius: 18px; flex-grow: 1; }
+        .comment-author { font-weight: 600; font-size: 13px; color: var(--text-primary); margin-bottom: 2px; display: block; }
+        .comment-text { font-size: 15px; color: var(--text-primary); line-height: 1.3; }
         
-        .post-btn {
-            background: linear-gradient(to bottom, #1877f2, #166fe5);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            white-space: nowrap;
+        .reply-btn { background: none; border: none; color: var(--text-secondary); font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 10px; }
+        .reply-btn:hover { text-decoration: underline; }
+
+        .reply-input-container { display: none; margin-top: 8px; margin-left: 42px; gap: 8px; }
+        .reply-input-container.active { display: flex; }
+        .reply-input-container input { flex-grow: 1; padding: 8px 12px; border-radius: 18px; border: 1px solid var(--border-color); }
+        .reply-submit-btn { background: var(--accent-blue); color: white; border: none; padding: 6px 12px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+        /* Input Area */
+        .input-area { border-top: 1px solid var(--border-color); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .name-input-row, .comment-input-row { display: flex; gap: 8px; align-items: center; }
+        .name-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); width: 60px; }
+        #usernameInput, #commentInput {
+            flex-grow: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border-color);
+            background-color: var(--bg-color); font-size: 15px; outline: none; box-sizing: border-box;
         }
+        #usernameInput:focus, #commentInput:focus { background-color: #fff; border-color: var(--accent-blue); }
+        
+        .post-btn { background: linear-gradient(to bottom, #1877f2, #166fe5); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
         .post-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* Options */
         .options-container { position: relative; }
-        .options-btn {
-            background: none;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 8px 12px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-        .options-menu {
-            display: none;
-            position: absolute;
-            bottom: 40px;
-            right: 0;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-            width: 260px;
-            z-index: 100;
-            overflow: hidden;
-        }
+        .options-btn { background: none; border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 12px; cursor: pointer; color: var(--text-secondary); font-size: 13px; }
+        .options-menu { display: none; position: absolute; bottom: 40px; right: 0; background: white; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); width: 260px; z-index: 100; overflow: hidden; }
         .options-menu.active { display: block; }
-        .option-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 14px;
-            border-bottom: 1px solid #f0f0f0;
-            line-height: 1.4;
-        }
+        .option-item { padding: 10px 15px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; line-height: 1.4; }
         .option-item:hover { background-color: var(--hover-bg); }
         .option-item:last-child { border-bottom: none; }
-        
-        .user-id-display {
-            font-size: 10px;
-            color: #999;
-            text-align: right;
-            padding: 0 16px 5px;
-            font-family: monospace;
-            display: none; /* Hidden by default now */
+
+        /* Group Badge */
+        .group-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: white;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="mainContainer">
     <div class="post-header">
         <div class="avatar"></div>
         <div class="user-info">
-            <h3>Wege-maniacy</h3>
+            <h3 id="pageTitle">Mięso-Maniacy </h3>
             <span>2 hrs · <span style="font-size:10px">🌍</span></span>
         </div>
     </div>
-    <div class="user-id-display" id="userIdDisplay"></div>
 
-    <div class="post-caption">
-        Komisja Europejska znów odrzuciła projekt delegalizacji reklam mięsa 😡 <br>
-        Wnioski? Pomysły? Kampanie? Piszcie w komentarzach 👇
+    <div class="post-caption" id="postCaption">
+        Loading discussion...
     </div>
 
     <div class="post-image">
-        <div class="panel vegan" data-fallback-icon="🥗">VEGE</div>
+        <div class="panel vegan" data-icon="🥗">VEGE</div>
         <div class="vs-badge">VS</div>
-        <div class="panel meat" data-fallback-icon="🥩">MIĘSO</div>
+        <div class="panel meat" data-icon="🥩">MIĘSO</div>
     </div>
 
-
     <div class="comments-section">
-        <ul class="comment-list" id="commentList">
-            <!-- Comments injected via JS -->
-        </ul>
+        <ul class="comment-list" id="commentList"></ul>
 
-        <!-- Updated Input Area -->
         <div class="input-area">
-            <!-- Name Input -->
             <div class="name-input-row">
                 <label class="name-label" for="usernameInput">Nick</label>
-                <input type="text" id="usernameInput" placeholder="Wpisz swój nick">
+                <input type="text" id="usernameInput" placeholder="user2348">
             </div>
-            
-            <!-- Comment Input -->
             <div class="comment-input-row">
                 <div class="input-wrapper">
-                    <input type="text" id="commentInput" placeholder="Dodaj komentarz...">
+                    <input type="text" id="commentInput" placeholder="Napisz coś...">
                 </div>
                 <div class="options-container">
-                    <button class="options-btn" id="optionsBtn">⚡Szybka odpowiedź</button>
+                    <button class="options-btn" id="optionsBtn">⚡ Szybka odpowiedź</button>
                     <div class="options-menu" id="optionsMenu">
-                        <div class="option-item" onclick="selectOption('I tried vegan for a month and loved it!')">🌱 Vegan for a month!</div>
-                        <div class="option-item" onclick="selectOption('Meat is essential for a balanced diet.')">🥩 Meat is essential.</div>
-                        <div class="option-item" onclick="selectOption('It depends on where you source your food.')">🤔 Depends on sourcing.</div>
-                        <div class="option-item" onclick="selectOption('Can we agree processed junk is bad for everyone?')">🍔 Processed junk is bad.</div>
+                        <!-- Options injected via JS -->
                     </div>
                 </div>
                 <button class="post-btn" id="postBtn">Opublikuj</button>
@@ -373,20 +190,72 @@
 </div>
 
 <script>
-    // --- CONFIGURATION LOADER ---
-    // Check if config loaded, otherwise throw error
-    if (typeof SUPABASE_CONFIG === 'undefined') {
-        console.error("Error: config.js not found or SUPABASE_CONFIG not defined.");
-        alert("Configuration error: Please ensure config.js exists and is loaded.");
+    // --- CONFIG & INIT ---
+    if (typeof SUPABASE_CONFIG === 'undefined') { alert("Config error"); }
+    const _supabase = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
+
+    // Determine Group from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    let CURRENT_GROUP = urlParams.get('group');
+    
+    // Default to 'vegan' if missing, or handle error
+    if (!CURRENT_GROUP || !['vegan', 'meat'].includes(CURRENT_GROUP)) {
+        CURRENT_GROUP = 'vegan'; // Default fallback
+        // Optional: Redirect or show error. For now, we default.
     }
 
-    const SUPABASE_URL = SUPABASE_CONFIG.url;
-    const SUPABASE_KEY = SUPABASE_CONFIG.key;
-    
-    const { createClient } = supabase;
-    const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Configuration per Group
+    const GROUP_CONFIG = {
+        'vegan': {
+            color: '#4caf50',
+            title: 'Vegan Team Discussion',
+            caption: 'The ultimate showdown! 🥗 vs 🥩 <br> <strong>Vegan Team:</strong> Share your favorite plant-based wins below! 👇',
+            options: [
+                '🌱 "I tried vegan for a month and loved it!"',
+                '🥑 "The variety of vegetables is endless."',
+                '🌍 "Better for the planet and my health."',
+                '🤔 "Can we agree processed junk is bad for everyone?"'
+            ]
+        },
+        'meat': {
+            color: '#d32f2f',
+            title: 'Meat Eaters Discussion',
+            caption: 'W parlamencie europejskim znowu debata klimatyczna. Temat ograniczania produkcji i spożycia mięsa wraca jak bumerang. Co o tym myślicie? Piszcie w komentarzach 👇',
+            options: [
+                '🥩 "Meat is essential for a balanced diet."',
+                '🍖 "Nothing beats a good steak after a workout."',
+                '🧬 "We evolved eating meat, it\'s natural."',
+                '🤔 "Can we agree processed junk is bad for everyone?"'
+            ]
+        }
+    };
 
-    // --- USER ID & NAME LOGIC ---
+    const CONFIG = GROUP_CONFIG[CURRENT_GROUP];
+
+    // Apply Theme
+    document.getElementById('mainContainer').style.borderTopColor = CONFIG.color;
+    //document.getElementById('groupBadge').textContent = CURRENT_GROUP;
+    //document.getElementById('groupBadge').style.backgroundColor = CONFIG.color;
+    document.getElementById('pageTitle').innerHTML = `Mięso-Maniacy`;
+    document.getElementById('postCaption').innerHTML = CONFIG.caption;
+
+    // Populate Quick Options
+    const optionsMenu = document.getElementById('optionsMenu');
+    CONFIG.options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'option-item';
+        // Extract text for the value, keep emoji for display
+        const text = opt.split('"')[1] || opt; 
+        div.textContent = opt;
+        div.onclick = () => {
+            document.getElementById('commentInput').value = text;
+            optionsMenu.classList.remove('active');
+            document.getElementById('commentInput').focus();
+        };
+        optionsMenu.appendChild(div);
+    });
+
+    // --- USER LOGIC ---
     function getOrCreateUserId() {
         let userId = localStorage.getItem('diet_app_user_id');
         if (!userId) {
@@ -395,20 +264,13 @@
         }
         return userId;
     }
-
     function loadSavedUsername() {
         const savedName = localStorage.getItem('diet_app_username');
-        if (savedName) {
-            document.getElementById('usernameInput').value = savedName;
-        }
+        if (savedName) document.getElementById('usernameInput').value = savedName;
     }
-
-    function saveUsername(name) {
-        localStorage.setItem('diet_app_username', name);
-    }
+    function saveUsername(name) { localStorage.setItem('diet_app_username', name); }
 
     const CURRENT_USER_ID = getOrCreateUserId();
-    
     document.addEventListener('DOMContentLoaded', () => {
         loadSavedUsername();
         loadComments();
@@ -420,7 +282,6 @@
     const postBtn = document.getElementById('postBtn');
     const commentList = document.getElementById('commentList');
     const optionsBtn = document.getElementById('optionsBtn');
-    const optionsMenu = document.getElementById('optionsMenu');
 
     // --- IMAGE FALLBACK ---
     document.querySelectorAll('.panel').forEach(panel => {
@@ -431,123 +292,160 @@
     });
 
     // --- UI INTERACTIONS ---
-    optionsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        optionsMenu.classList.toggle('active');
-    });
+    optionsBtn.addEventListener('click', (e) => { e.stopPropagation(); optionsMenu.classList.toggle('active'); });
     document.addEventListener('click', () => optionsMenu.classList.remove('active'));
-    
-    window.selectOption = function(text) {
-        commentInput.value = text;
-        optionsMenu.classList.remove('active');
-        commentInput.focus();
-    }
 
     // --- RENDER FUNCTION ---
-    function createCommentElement(author, text, isFixed) {
+    function createCommentElement(comment, isFixed) {
         const li = document.createElement('li');
-        li.className = 'comment-item';
-        
-        let displayName = author;
-        if (!displayName || displayName.trim() === "") {
-            displayName = isFixed ? "Anonymous User" : "Guest";
-        }
+        li.className = `comment-item reply-level-${comment.reply_level || 0}`;
+        li.id = `comment-${comment.id}`;
+
+        let displayName = comment.author || "Guest";
+        if (!displayName.trim()) displayName = isFixed ? "Anonymous" : "Guest";
 
         const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random`;
+        const canReply = (comment.reply_level < 3);
+        const replyButtonHtml = canReply ? `<button class="reply-btn" onclick="toggleReplyInput(${comment.id})">Reply</button>` : '';
 
         li.innerHTML = `
             <img src="${avatarUrl}" class="comment-avatar" alt="${displayName}">
             <div class="comment-bubble">
-                <span class="comment-author">${escapeHtml(displayName)}</span>
-                <div class="comment-text">${escapeHtml(text)}</div>
+                <span class="comment-author">${escapeHtml(displayName)} ${replyButtonHtml}</span>
+                <div class="comment-text">${escapeHtml(comment.content)}</div>
+                <div id="reply-input-${comment.id}" class="reply-input-container">
+                    <input type="text" id="reply-text-${comment.id}" placeholder="Napisz odpowiedź...">
+                    <button class="reply-submit-btn" onclick="submitReply(${comment.id})">Send</button>
+                </div>
             </div>
         `;
         return li;
     }
 
-    // --- SUPABASE LOGIC ---
+    // --- REPLY LOGIC ---
+    window.toggleReplyInput = function(parentId) {
+        const container = document.getElementById(`reply-input-${parentId}`);
+        const input = document.getElementById(`reply-text-${parentId}`);
+        if (container.classList.contains('active')) {
+            container.classList.remove('active');
+        } else {
+            document.querySelectorAll('.reply-input-container').forEach(el => el.classList.remove('active'));
+            container.classList.add('active');
+            input.focus();
+        }
+    };
+
+    window.submitReply = async function(parentId) {
+        const textInput = document.getElementById(`reply-text-${parentId}`);
+        const text = textInput.value.trim();
+        const name = usernameInput.value.trim();
+
+        if (!text) return alert("Please write a reply.");
+        if (!name) return alert("Please enter your name first.");
+
+        saveUsername(name);
+
+        // Get parent level
+        const { data: parentData } = await _supabase.from('comments').select('reply_level').eq('id', parentId).single();
+        const newLevel = (parentData?.reply_level || 0) + 1;
+
+        const newComment = {
+            content: text,
+            author: name,
+            user_id: CURRENT_USER_ID,
+            parent_id: parentId,
+            reply_level: newLevel,
+            group_tag: CURRENT_GROUP // IMPORTANT: Tag with current group
+        };
+
+        const { data, error } = await _supabase.from('com2').insert([newComment]).select();
+
+        if (error) { alert('Failed: ' + error.message); return; }
+
+        const newLi = createCommentElement(data[0], false);
+        const parentLi = document.getElementById(`comment-${parentId}`);
+        parentLi.after(newLi);
+        
+        textInput.value = '';
+        document.getElementById(`reply-input-${parentId}`).classList.remove('active');
+        newLi.style.backgroundColor = '#e7f3ff';
+        setTimeout(() => newLi.style.backgroundColor = 'transparent', 1000);
+    };
+
+    // --- LOAD LOGIC ---
     async function loadComments() {
         commentList.innerHTML = '<li style="text-align:center; color:#666; padding:10px;">Loading comments...</li>';
 
+        // Filter by Group AND (Fixed OR User)
+        // We fetch all matching the group first
         const { data, error } = await _supabase
             .from('com2')
             .select('*')
+            .eq('group_tag', CURRENT_GROUP) // Only this group
             .order('created_at', { ascending: true });
 
         if (error) {
-            console.error('Supabase Error:', error);
-            commentList.innerHTML = `<li style="color:red; padding:10px;">Error: ${error.message}</li>`;
+            console.error('Error:', error);
+            commentList.innerHTML = `<li style="color:red;">Error: ${error.message}</li>`;
             return;
         }
 
-        commentList.innerHTML = ''; 
-
+        commentList.innerHTML = '';
         if (!data || data.length === 0) {
             commentList.innerHTML = '<li style="text-align:center; color:#666; padding:10px;">No comments yet. Be the first!</li>';
             return;
         }
 
+        // Filter visibility: Fixed OR Current User
         const visibleComments = data.filter(comment => {
             const commentUserId = comment.user_id || 'fixed';
             return commentUserId === 'fixed' || commentUserId === CURRENT_USER_ID;
         });
 
         if (visibleComments.length === 0) {
-            commentList.innerHTML = '<li style="text-align:center; color:#666; padding:10px;">No comments yet. Be the first!</li>';
+            commentList.innerHTML = '<li style="text-align:center; color:#666; padding:10px;">No comments yet.</li>';
             return;
         }
 
         visibleComments.forEach(comment => {
             const isFixed = (comment.user_id === 'fixed');
-            const authorName = comment.author || comment.name || comment.username || null;
-            const finalName = isFixed ? authorName : authorName; 
-            
-            const li = createCommentElement(finalName, comment.content, isFixed);
+            const li = createCommentElement(comment, isFixed);
             commentList.appendChild(li);
         });
-        
         commentList.scrollTop = commentList.scrollHeight;
     }
 
+    // --- POST LOGIC ---
     async function handlePost() {
         const text = commentInput.value.trim();
         const name = usernameInput.value.trim();
 
-        if (!text) {
-            alert("Please write a comment.");
-            return;
-        }
-        if (!name) {
-            alert("Please enter your name first.");
-            usernameInput.focus();
-            return;
-        }
+        if (!text) return alert("Write a comment.");
+        if (!name) return alert("Enter your name.");
 
         saveUsername(name);
-
         postBtn.disabled = true;
         postBtn.textContent = '...';
 
         const newComment = {
             content: text,
             author: name,
-            user_id: CURRENT_USER_ID
+            user_id: CURRENT_USER_ID,
+            parent_id: null,
+            reply_level: 0,
+            group_tag: CURRENT_GROUP // IMPORTANT: Tag with current group
         };
 
-        const { data, error } = await _supabase
-            .from('com2')
-            .insert([newComment])
-            .select();
+        const { data, error } = await _supabase.from('com2').insert([newComment]).select();
 
         if (error) {
-            console.error('Error posting:', error);
-            alert('Failed to post comment: ' + error.message);
+            alert('Failed: ' + error.message);
             postBtn.disabled = false;
             postBtn.textContent = 'Post';
             return;
         }
 
-        const li = createCommentElement(data[0].author, data[0].content, false);
+        const li = createCommentElement(data[0], false);
         commentList.appendChild(li);
         commentInput.value = '';
         commentList.scrollTop = commentList.scrollHeight;
@@ -557,9 +455,7 @@
     }
 
     postBtn.addEventListener('click', handlePost);
-    commentInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handlePost();
-    });
+    commentInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handlePost(); });
 
     function escapeHtml(text) {
         if (!text) return "";
@@ -567,5 +463,6 @@
         return text.replace(/[&<>"']/g, m => map[m]);
     }
 </script>
+
 </body>
 </html>
