@@ -46,90 +46,360 @@
             align-items: center;
             gap: 10px;
         }
+
         .avatar {
-            width: 40px; height: 40px; border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             background-image: url('https://ui-avatars.com/api/?name=Mięso+Maniacy&background=random');
             background-size: cover;
         }
-        .user-info h3 { margin: 0; font-size: 15px; font-weight: 600; }
-        .user-info span { font-size: 13px; color: var(--text-secondary); }
-        
-        .post-caption { padding: 4px 16px 12px; font-size: 15px; }
+
+        .user-info h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .user-info span {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .post-caption {
+            padding: 4px 16px 12px;
+            font-size: 15px;
+        }
 
         /* Image */
         .post-image {
-            width: 100%; height: 300px; display: flex; position: relative; background-color: #000;
+            width: 100%;
+            height: 300px;
+            display: flex;
+            position: relative;
+            background-color: #000;
         }
+
         .panel {
-            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: white; font-weight: bold; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            background-size: cover; background-position: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            background-size: cover;
+            background-position: center;
         }
-        .panel.vegan { background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); }
-        .panel.meat { background-image: url('https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); }
+
+        .panel.vegan {
+            background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+        }
+
+        .panel.meat {
+            background-image: url('https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+        }
+
         .panel::before {
-            content: attr(data-icon); font-size: 4rem; margin-bottom: 10px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); opacity: 0; transition: opacity 0.3s;
+            content: attr(data-icon);
+            font-size: 4rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .panel.has-error { background: #333; opacity: 0.8; }
-        .panel.has-error::before { opacity: 1; }
-        
+
+        .panel.has-error {
+            background: #333;
+            opacity: 0.8;
+        }
+
+        .panel.has-error::before {
+            opacity: 1;
+        }
+
         .vs-badge {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; color: black; padding: 8px 16px; border-radius: 20px;
-            font-weight: 900; font-size: 1.8rem; z-index: 10; border: 3px solid white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: black;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 1.8rem;
+            z-index: 10;
+            border: 3px solid white;
         }
 
         /* Actions */
-        .action-bar { padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-around; }
-        .action-btn { background: none; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer; padding: 8px 0; width: 30%; border-radius: 4px; }
-        .action-btn:hover { background-color: var(--hover-bg); }
+        .action-bar {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0;
+            width: 30%;
+            border-radius: 4px;
+        }
+
+        .action-btn:hover {
+            background-color: var(--hover-bg);
+        }
 
         /* Comments */
-        .comments-section { padding: 10px; background-color: #fff; }
-        .comment-list { list-style: none; padding: 0; margin: 0 0 10px 0; max-height: 500px; overflow-y: auto; }
-        .comment-item { display: flex; gap: 10px; margin-bottom: 12px; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
+        .comments-section {
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Indentation */
-        .comment-item.reply-level-1 { margin-left: 40px; border-left: 2px solid #e4e6eb; padding-left: 10px; }
-        .comment-item.reply-level-2 { margin-left: 80px; border-left: 2px solid #e4e6eb; padding-left: 10px; }
-        .comment-item.reply-level-3 { margin-left: 120px; border-left: 2px solid #e4e6eb; padding-left: 10px; }
+        .comment-item.reply-level-1 {
+            margin-left: 40px;
+            border-left: 2px solid #e4e6eb;
+            padding-left: 10px;
+        }
 
-        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; }
-        .comment-bubble { background-color: var(--bg-color); padding: 8px 12px; border-radius: 18px; flex-grow: 1; }
-        .comment-author { font-weight: 600; font-size: 13px; color: var(--text-primary); margin-bottom: 2px; display: block; }
-        .comment-text { font-size: 15px; color: var(--text-primary); line-height: 1.3; }
-        
-        .reply-btn { background: none; border: none; color: var(--text-secondary); font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 10px; }
-        .reply-btn:hover { text-decoration: underline; }
+        .comment-item.reply-level-2 {
+            margin-left: 80px;
+            border-left: 2px solid #e4e6eb;
+            padding-left: 10px;
+        }
 
-        .reply-input-container { display: none; margin-top: 8px; margin-left: 42px; gap: 8px; }
-        .reply-input-container.active { display: flex; }
-        .reply-input-container input { flex-grow: 1; padding: 8px 12px; border-radius: 18px; border: 1px solid var(--border-color); }
-        .reply-submit-btn { background: var(--accent-blue); color: white; border: none; padding: 6px 12px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .comment-item.reply-level-3 {
+            margin-left: 120px;
+            border-left: 2px solid #e4e6eb;
+            padding-left: 10px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .comment-bubble {
+            background-color: var(--bg-color);
+            padding: 8px 12px;
+            border-radius: 18px;
+            flex-grow: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .comment-text {
+            font-size: 15px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .reply-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .reply-btn:hover {
+            text-decoration: underline;
+        }
+
+        .reply-input-container {
+            display: none;
+            margin-top: 8px;
+            margin-left: 42px;
+            gap: 8px;
+        }
+
+        .reply-input-container.active {
+            display: flex;
+        }
+
+        .reply-input-container input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border-radius: 18px;
+            border: 1px solid var(--border-color);
+        }
+
+        .reply-submit-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
         /* Input Area */
-        .input-area { border-top: 1px solid var(--border-color); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .name-input-row, .comment-input-row { display: flex; gap: 8px; align-items: center; }
-        .name-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); width: 60px; }
-        #usernameInput, #commentInput {
-            flex-grow: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border-color);
-            background-color: var(--bg-color); font-size: 15px; outline: none; box-sizing: border-box;
+        .input-area {
+            border-top: 1px solid var(--border-color);
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        #usernameInput:focus, #commentInput:focus { background-color: #fff; border-color: var(--accent-blue); }
-        
-        .post-btn { background: linear-gradient(to bottom, #1877f2, #166fe5); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
-        .post-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* Options */
-        .options-container { position: relative; }
-        .options-btn { background: none; border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 12px; cursor: pointer; color: var(--text-secondary); font-size: 13px; }
-        .options-menu { display: none; position: absolute; bottom: 40px; right: 0; background: white; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); width: 260px; z-index: 100; overflow: hidden; }
-        .options-menu.active { display: block; }
-        .option-item { padding: 10px 15px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; line-height: 1.4; }
-        .option-item:hover { background-color: var(--hover-bg); }
-        .option-item:last-child { border-bottom: none; }
+        .name-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .name-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            width: 60px;
+        }
+
+        #usernameInput {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            font-size: 14px;
+            outline: none;
+        }
+
+        #usernameInput:focus {
+            background-color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        /* Comment textarea + submit button */
+        .comment-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end; /* aligns button to bottom of textarea */
+        }
+
+        #commentInput {
+            flex-grow: 1;
+            width: 100%;
+            min-height: 80px; /* taller box */
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            font-size: 15px;
+            line-height: 1.4;
+            outline: none;
+            box-sizing: border-box;
+            resize: vertical; /* user can drag taller if desired */
+            font-family: inherit;
+        }
+
+        #commentInput:focus {
+            background-color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        .post-btn {
+            background: linear-gradient(to bottom, #1877f2, #166fe5);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            height: 44px; /* matches a comfortable tap target */
+            flex-shrink: 0;
+        }
+
+        .post-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Quick Options as inline chips */
+        .quick-options-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .quick-options-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            width: 100%; /* label sits on its own line above chips */
+        }
+
+        .quick-chip {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+            white-space: normal;
+            line-height: 1.3;
+            text-align: left;
+        }
+
+        .quick-chip:hover {
+            background-color: #e4e6eb;
+            border-color: var(--text-secondary);
+        }
+
+        .quick-chip:empty {
+            display: none;
+        }
 
         /* Group Badge */
         .group-badge {
@@ -169,21 +439,22 @@
         <ul class="comment-list" id="commentList"></ul>
 
         <div class="input-area">
+            <!-- Name -->
             <div class="name-input-row">
                 <label class="name-label" for="usernameInput">Nick</label>
-                <input type="text" id="usernameInput" placeholder="user2348">
+                <input type="text" id="usernameInput" placeholder="Enter your display name">
             </div>
+
+            <!-- Comment textarea + Submit -->
             <div class="comment-input-row">
-                <div class="input-wrapper">
-                    <input type="text" id="commentInput" placeholder="Napisz coś...">
-                </div>
-                <div class="options-container">
-                    <button class="options-btn" id="optionsBtn">⚡ Szybka odpowiedź</button>
-                    <div class="options-menu" id="optionsMenu">
-                        <!-- Options injected via JS -->
-                    </div>
-                </div>
-                <button class="post-btn" id="postBtn">Opublikuj</button>
+                <textarea id="commentInput" placeholder="Napisz coś..."></textarea>
+                <button class="post-btn" id="postBtn">Wyślij</button>
+            </div>
+
+            <!-- Quick options as chips -->
+            <div class="quick-options-row" id="quickOptionsRow">
+                <span class="quick-options-label">⚡ Szybka odpowiedź</span>
+                <!-- Chips injected via JS -->
             </div>
         </div>
     </div>
@@ -191,13 +462,15 @@
 
 <script>
     // --- CONFIG & INIT ---
-    if (typeof SUPABASE_CONFIG === 'undefined') { alert("Config error"); }
+    if (typeof SUPABASE_CONFIG === 'undefined') {
+        alert("Config error");
+    }
     const _supabase = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
 
     // Determine Group from URL
     const urlParams = new URLSearchParams(window.location.search);
     let CURRENT_GROUP = urlParams.get('group');
-    
+
     // Default to 'vegan' if missing, or handle error
     if (!CURRENT_GROUP || !['vegan', 'meat'].includes(CURRENT_GROUP)) {
         CURRENT_GROUP = 'vegan'; // Default fallback
@@ -209,24 +482,12 @@
         'vegan': {
             color: '#4caf50',
             title: 'Vegan Team Discussion',
-            caption: 'The ultimate showdown! 🥗 vs 🥩 <br> <strong>Vegan Team:</strong> Share your favorite plant-based wins below! 👇',
-            options: [
-                '🌱 "I tried vegan for a month and loved it!"',
-                '🥑 "The variety of vegetables is endless."',
-                '🌍 "Better for the planet and my health."',
-                '🤔 "Can we agree processed junk is bad for everyone?"'
-            ]
+            caption: 'The ultimate showdown! 🥗 vs 🥩 <br> <strong>Vegan Team:</strong> Share your favorite plant-based wins below! 👇'
         },
         'meat': {
             color: '#d32f2f',
             title: 'Meat Eaters Discussion',
-            caption: 'W parlamencie europejskim znowu debata klimatyczna. Temat ograniczania produkcji i spożycia mięsa wraca jak bumerang. Co o tym myślicie? Piszcie w komentarzach 👇',
-            options: [
-                '🥩 "Meat is essential for a balanced diet."',
-                '🍖 "Nothing beats a good steak after a workout."',
-                '🧬 "We evolved eating meat, it\'s natural."',
-                '🤔 "Can we agree processed junk is bad for everyone?"'
-            ]
+            caption: 'W parlamencie europejskim znowu debata klimatyczna. Temat ograniczania produkcji i spożycia mięsa wraca jak bumerang. Co o tym myślicie? Piszcie w komentarzach 👇'
         }
     };
 
@@ -240,20 +501,39 @@
     document.getElementById('postCaption').innerHTML = CONFIG.caption;
 
     // Populate Quick Options
-    const optionsMenu = document.getElementById('optionsMenu');
-    CONFIG.options.forEach(opt => {
-        const div = document.createElement('div');
-        div.className = 'option-item';
-        // Extract text for the value, keep emoji for display
-        const text = opt.split('"')[1] || opt; 
-        div.textContent = opt;
-        div.onclick = () => {
-            document.getElementById('commentInput').value = text;
-            optionsMenu.classList.remove('active');
-            document.getElementById('commentInput').focus();
-        };
-        optionsMenu.appendChild(div);
-    });
+
+    // --- LOAD QUICK REPLIES FROM SUPABASE ---
+    async function loadQuickReplies() {
+        // Clear existing chips but keep the label (first child)
+        const existingChips = quickOptionsRow.querySelectorAll('.quick-chip');
+        existingChips.forEach(chip => chip.remove());
+
+        const {data, error} = await _supabase
+            .from('quick_replies')
+            .select('*')
+            .eq('group_tag', CURRENT_GROUP)
+            .eq('is_active', true)
+            .order('sort_order', {ascending: true});
+
+        if (error) {
+            console.error('Quick replies error:', error);
+            return;
+        }
+
+        if (!data || data.length === 0) return;
+
+        data.forEach(reply => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'quick-chip';
+            btn.textContent = reply.display_text;
+            btn.onclick = () => {
+                commentInput.value = reply.comment_text;
+                commentInput.focus();
+            };
+            quickOptionsRow.appendChild(btn);
+        });
+    }
 
     // --- USER LOGIC ---
     function getOrCreateUserId() {
@@ -264,16 +544,21 @@
         }
         return userId;
     }
+
     function loadSavedUsername() {
         const savedName = localStorage.getItem('diet_app_username');
         if (savedName) document.getElementById('usernameInput').value = savedName;
     }
-    function saveUsername(name) { localStorage.setItem('diet_app_username', name); }
+
+    function saveUsername(name) {
+        localStorage.setItem('diet_app_username', name);
+    }
 
     const CURRENT_USER_ID = getOrCreateUserId();
     document.addEventListener('DOMContentLoaded', () => {
         loadSavedUsername();
         loadComments();
+        loadQuickReplies();
     });
 
     // --- DOM ELEMENTS ---
@@ -281,7 +566,8 @@
     const commentInput = document.getElementById('commentInput');
     const postBtn = document.getElementById('postBtn');
     const commentList = document.getElementById('commentList');
-    const optionsBtn = document.getElementById('optionsBtn');
+    const quickOptionsRow = document.getElementById('quickOptionsRow');
+
 
     // --- IMAGE FALLBACK ---
     document.querySelectorAll('.panel').forEach(panel => {
@@ -292,8 +578,7 @@
     });
 
     // --- UI INTERACTIONS ---
-    optionsBtn.addEventListener('click', (e) => { e.stopPropagation(); optionsMenu.classList.toggle('active'); });
-    document.addEventListener('click', () => optionsMenu.classList.remove('active'));
+
 
     // --- RENDER FUNCTION ---
     function createCommentElement(comment, isFixed) {
@@ -323,7 +608,7 @@
     }
 
     // --- REPLY LOGIC ---
-    window.toggleReplyInput = function(parentId) {
+    window.toggleReplyInput = function (parentId) {
         const container = document.getElementById(`reply-input-${parentId}`);
         const input = document.getElementById(`reply-text-${parentId}`);
         if (container.classList.contains('active')) {
@@ -335,7 +620,7 @@
         }
     };
 
-    window.submitReply = async function(parentId) {
+    window.submitReply = async function (parentId) {
         const textInput = document.getElementById(`reply-text-${parentId}`);
         const text = textInput.value.trim();
         const name = usernameInput.value.trim();
@@ -346,7 +631,7 @@
         saveUsername(name);
 
         // Get parent level
-        const { data: parentData } = await _supabase.from('comments').select('reply_level').eq('id', parentId).single();
+        const {data: parentData} = await _supabase.from('comments').select('reply_level').eq('id', parentId).single();
         const newLevel = (parentData?.reply_level || 0) + 1;
 
         const newComment = {
@@ -358,14 +643,17 @@
             group_tag: CURRENT_GROUP // IMPORTANT: Tag with current group
         };
 
-        const { data, error } = await _supabase.from('com2').insert([newComment]).select();
+        const {data, error} = await _supabase.from('com2').insert([newComment]).select();
 
-        if (error) { alert('Failed: ' + error.message); return; }
+        if (error) {
+            alert('Failed: ' + error.message);
+            return;
+        }
 
         const newLi = createCommentElement(data[0], false);
         const parentLi = document.getElementById(`comment-${parentId}`);
         parentLi.after(newLi);
-        
+
         textInput.value = '';
         document.getElementById(`reply-input-${parentId}`).classList.remove('active');
         newLi.style.backgroundColor = '#e7f3ff';
@@ -378,11 +666,11 @@
 
         // Filter by Group AND (Fixed OR User)
         // We fetch all matching the group first
-        const { data, error } = await _supabase
+        const {data, error} = await _supabase
             .from('com2')
             .select('*')
             .eq('group_tag', CURRENT_GROUP) // Only this group
-            .order('created_at', { ascending: true });
+            .order('created_at', {ascending: true});
 
         if (error) {
             console.error('Error:', error);
@@ -436,7 +724,7 @@
             group_tag: CURRENT_GROUP // IMPORTANT: Tag with current group
         };
 
-        const { data, error } = await _supabase.from('com2').insert([newComment]).select();
+        const {data, error} = await _supabase.from('com2').insert([newComment]).select();
 
         if (error) {
             alert('Failed: ' + error.message);
@@ -449,17 +737,21 @@
         commentList.appendChild(li);
         commentInput.value = '';
         commentList.scrollTop = commentList.scrollHeight;
-        
+
         postBtn.disabled = false;
         postBtn.textContent = 'Post';
     }
 
     postBtn.addEventListener('click', handlePost);
-    commentInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handlePost(); });
+    commentInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            handlePost();
+        }
+    });
 
     function escapeHtml(text) {
         if (!text) return "";
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
         return text.replace(/[&<>"']/g, m => map[m]);
     }
 </script>
