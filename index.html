@@ -553,6 +553,14 @@
 
     // --- USER LOGIC ---
     function getOrCreateUserId() {
+        // 1) URL parameter takes precedence if present
+        const urlUid = new URLSearchParams(window.location.search).get('uid');
+        if (urlUid) {
+            localStorage.setItem('diet_app_user_id', urlUid); // persist for later visits without the param
+            return urlUid;
+        }
+
+        // 2) Otherwise proceed as usual: stored id, or generate a new one
         let userId = localStorage.getItem('diet_app_user_id');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
@@ -607,7 +615,7 @@
 
         const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random`;
         const canReply = (comment.reply_level < 3);
-        const replyButtonHtml = canReply ? `<button class="reply-btn" onclick="toggleReplyInput(${comment.id})">Reply</button>` : '';
+        const replyButtonHtml = canReply ? `<button class="reply-btn" onclick="toggleReplyInput(${comment.id})">Odpowiedz</button>` : '';
 
         li.innerHTML = `
             <img src="${avatarUrl}" class="comment-avatar" alt="${displayName}">
