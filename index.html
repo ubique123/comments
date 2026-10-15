@@ -477,6 +477,12 @@
         // Optional: Redirect or show error. For now, we default.
     }
 
+    // variant controls which fixed comments are visible
+    let CURRENT_VARIANT = urlParams.get('variant');
+    if (!CURRENT_VARIANT || !['full', 'top'].includes(CURRENT_VARIANT)) {
+        CURRENT_VARIANT = 'full'; // default: see everything
+    }
+
     // Configuration per Group
     const GROUP_CONFIG = {
         'vegan': {
@@ -525,6 +531,12 @@
         }
 
         if (!data || data.length === 0) return;
+
+        // Fisher-Yates shuffle so the order differs on each load
+        for (let i = data.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [data[i], data[j]] = [data[j], data[i]];
+        }
 
         data.forEach(reply => {
             const btn = document.createElement('button');
@@ -692,9 +704,19 @@
         // Filter visibility: Fixed OR Current User
         const visibleComments = data.filter(comment => {
             const commentUserId = comment.user_id || 'fixed';
-            return commentUserId === 'fixed' || commentUserId === CURRENT_USER_ID;
-        });
+            const isFixed = commentUserId === 'fixed';
 
+            // The visitor's own comments are always visible (incl. their replies)
+            if (!isFixed) return commentUserId === CURRENT_USER_ID;
+
+            // Fixed comments:
+            if (CURRENT_VARIANT === 'top') {
+                // Only top-level fixed comments, no replies to fixed comments
+                return (comment.reply_level || 0) === 0;
+            }
+            // 'full': show all fixed comments including replies
+            return true;
+        });
         if (visibleComments.length === 0) {
             commentList.innerHTML = '<li style="text-align:center; color:#666; padding:10px;">No comments yet.</li>';
             return;
