@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diet Debate - Group Discussion</title>
+    <title>Zdrowa dieta</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config.js"></script> <!-- Load Config First -->
     <style>
@@ -420,7 +420,7 @@
     <div class="post-header">
         <div class="avatar"></div>
         <div class="user-info">
-            <h3 id="pageTitle">Mięso-Maniacy </h3>
+            <h3 id="pageTitle">Dieta</h3>
             <span>2 hrs · <span style="font-size:10px">🌍</span></span>
         </div>
     </div>
@@ -442,7 +442,7 @@
             <!-- Name -->
             <div class="name-input-row">
                 <label class="name-label" for="usernameInput">Nick</label>
-                <input type="text" id="usernameInput" placeholder="Enter your display name">
+                <input type="text" id="usernameInput" placeholder="Wpisz swój nick...">
             </div>
 
             <!-- Comment textarea + Submit -->
@@ -481,12 +481,14 @@
     const GROUP_CONFIG = {
         'vegan': {
             color: '#4caf50',
-            title: 'Vegan Team Discussion',
-            caption: 'The ultimate showdown! 🥗 vs 🥩 <br> <strong>Vegan Team:</strong> Share your favorite plant-based wins below! 👇'
+            pageTitle: 'Wege-Maniacy',
+            avatar: 'https://ui-avatars.com/api/?name=Wege-Maniacy&background=4caf50&color=fff&bold=true&size=128',
+            caption: 'W parlamencie europejskim znowu debata klimatyczna. Temat ograniczania produkcji i spożycia mięsa wraca jak bumerang. Co o tym myślicie? Piszcie w komentarzach 👇'
         },
         'meat': {
             color: '#d32f2f',
-            title: 'Meat Eaters Discussion',
+            pageTitle: 'Mięso-Maniacy',
+            avatar: 'https://ui-avatars.com/api/?name=Mięso-Maniacy&background=4caf50&color=fff&bold=true&size=128',
             caption: 'W parlamencie europejskim znowu debata klimatyczna. Temat ograniczania produkcji i spożycia mięsa wraca jak bumerang. Co o tym myślicie? Piszcie w komentarzach 👇'
         }
     };
@@ -497,8 +499,10 @@
     document.getElementById('mainContainer').style.borderTopColor = CONFIG.color;
     //document.getElementById('groupBadge').textContent = CURRENT_GROUP;
     //document.getElementById('groupBadge').style.backgroundColor = CONFIG.color;
-    document.getElementById('pageTitle').innerHTML = `Mięso-Maniacy`;
+    document.getElementById('pageTitle').innerHTML = CONFIG.pageTitle;
     document.getElementById('postCaption').innerHTML = CONFIG.caption;
+    // Group avatar
+    document.querySelector('.avatar').style.backgroundImage = `url('${CONFIG.avatar}')`;
 
     // Populate Quick Options
 
@@ -657,6 +661,7 @@
         textInput.value = '';
         document.getElementById(`reply-input-${parentId}`).classList.remove('active');
         newLi.style.backgroundColor = '#e7f3ff';
+        newLi.scrollIntoView({behavior: 'smooth', block: 'nearest'});
         setTimeout(() => newLi.style.backgroundColor = 'transparent', 1000);
     };
 
@@ -695,12 +700,46 @@
             return;
         }
 
-        visibleComments.forEach(comment => {
-            const isFixed = (comment.user_id === 'fixed');
+        // --- Build comment blocks (parent + its replies) ---
+        const roots = visibleComments.filter(c => (c.reply_level || 0) === 0);
+        const replies = visibleComments.filter(c => (c.reply_level || 0) > 0);
+
+// Group replies under their parent id, sorted by time
+        const repliesByParent = {};
+        replies.forEach(r => {
+            const pid = r.parent_id;
+            if (!repliesByParent[pid]) repliesByParent[pid] = [];
+            repliesByParent[pid].push(r);
+        });
+        Object.values(repliesByParent).forEach(list =>
+            list.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+        );
+
+// Split top-level roots into fixed (to shuffle) and user (keep order)
+        const fixedRoots = roots.filter(c => (c.user_id || 'fixed') === 'fixed');
+        const userRoots = roots.filter(c => (c.user_id || 'fixed') !== 'fixed');
+
+// Fisher-Yates shuffle of the fixed top-level comments
+        for (let i = fixedRoots.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [fixedRoots[i], fixedRoots[j]] = [fixedRoots[j], fixedRoots[i]];
+        }
+
+// Render order: shuffled fixed roots first, then user's own roots
+        const orderedRoots = [...fixedRoots, ...userRoots];
+
+// Helper to render a comment and all its descendants recursively
+        function renderBlock(comment, isFixed) {
             const li = createCommentElement(comment, isFixed);
             commentList.appendChild(li);
+            const children = repliesByParent[comment.id] || [];
+            children.forEach(child => renderBlock(child, (child.user_id || 'fixed') === 'fixed'));
+        }
+
+        orderedRoots.forEach(root => {
+            renderBlock(root, (root.user_id || 'fixed') === 'fixed');
         });
-        commentList.scrollTop = commentList.scrollHeight;
+
     }
 
     // --- POST LOGIC ---
