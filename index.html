@@ -616,7 +616,7 @@
                 <div class="comment-text">${escapeHtml(comment.content)}</div>
                 <div id="reply-input-${comment.id}" class="reply-input-container">
                     <input type="text" id="reply-text-${comment.id}" placeholder="Napisz odpowiedź...">
-                    <button class="reply-submit-btn" onclick="submitReply(${comment.id})">Send</button>
+                    <button class="reply-submit-btn" onclick="submitReply(${comment.id})">Wyślij</button>
                 </div>
             </div>
         `;
@@ -643,32 +643,54 @@
 
         if (!text) return alert("Please write a reply.");
         if (!name) return alert("Please enter your name first.");
-
         saveUsername(name);
 
-        // Get parent level
-        const {data: parentData} = await _supabase.from('comments').select('reply_level').eq('id', parentId).single();
-        const newLevel = (parentData?.reply_level || 0) + 1;
+        // 1) Try to get the parent's level from the data already loaded on the page
+        let parentLevel = 0;
+        try {
+            const cached = window.__loadedComments?.find(c => c.id === parentId);
+            if (cached) parentLevel = cached.reply_level || 0;
+        } catch (e) { /* ignore, fall back to DB */
+        }
+
+        // 2) Fallback: fetch from DB only if not cached
+        if (!parentLevel) {
+            const {data: parentData} = await _supabase
+                .from('com2')
+                .select('reply_level')
+                .eq('id', parentId)
+                .single();
+            parentLevel = parentData?.reply_level ?? 0;
+        }
 
         const newComment = {
             content: text,
             author: name,
             user_id: CURRENT_USER_ID,
             parent_id: parentId,
-            reply_level: newLevel,
-            group_tag: CURRENT_GROUP // IMPORTANT: Tag with current group
+            reply_level: parentLevel + 1,
+            group_tag: CURRENT_GROUP
         };
 
-        const {data, error} = await _supabase.from('com2').insert([newComment]).select();
+        const {data, error} = await _supabase
+            .from('com2')
+            .insert([newComment])
+            .select()
+            .single();   // <-- ensures you get the actual stored row back
 
         if (error) {
             alert('Failed: ' + error.message);
             return;
         }
 
-        const newLi = createCommentElement(data[0], false);
-        const parentLi = document.getElementById(`comment-${parentId}`);
-        parentLi.after(newLi);
+        // 3) Sanity check: if the DB stored 0 despite sending parentLevel+1,
+        //    the column is missing/misnamed — surface it instead of hiding it
+        if ((data.reply_level ?? 0) === 0 && (parentLevel + 1) > 0) {
+            console.warn('reply_level was not persisted — check that the column exists in the comments table.');
+        }
+
+        const newLi = createCommentElement(data, false);
+        document.getElementById(`comment-${parentId}`).after(newLi);
 
         textInput.value = '';
         document.getElementById(`reply-input-${parentId}`).classList.remove('active');
@@ -761,6 +783,7 @@
         orderedRoots.forEach(root => {
             renderBlock(root, (root.user_id || 'fixed') === 'fixed');
         });
+        window.__loadedComments = visibleComments;
 
     }
 
@@ -769,8 +792,8 @@
         const text = commentInput.value.trim();
         const name = usernameInput.value.trim();
 
-        if (!text) return alert("Write a comment.");
-        if (!name) return alert("Enter your name.");
+        if (!text) return alert("Napisz coś");
+        if (!name) return alert("Ustaw swój nick");
 
         saveUsername(name);
         postBtn.disabled = true;
