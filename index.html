@@ -790,7 +790,7 @@
         if (error) {
             alert('Failed: ' + error.message);
             postBtn.disabled = false;
-            postBtn.textContent = 'Post';
+            postBtn.textContent = 'Wyślij';
             return;
         }
 
@@ -800,7 +800,7 @@
         commentList.scrollTop = commentList.scrollHeight;
 
         postBtn.disabled = false;
-        postBtn.textContent = 'Post';
+        postBtn.textContent = 'Wyślij';
     }
 
     postBtn.addEventListener('click', handlePost);
